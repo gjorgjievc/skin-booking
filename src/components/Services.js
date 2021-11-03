@@ -10,6 +10,7 @@ import ServicesList from "./ServicesList";
 
 const Services = () => {
     const [list, setList] = useState([]);
+    const [treatments, setTreatments] = useState([])
 
     const handleList = (serviceName) => {
         const arr = []
@@ -34,6 +35,7 @@ const Services = () => {
         })
         console.log('opa', array)
         setList(arr)
+        setTreatments(array)
     }
 
     const handleAll = () => {
@@ -43,23 +45,28 @@ const Services = () => {
         defaultItems.map(service => {
             return (
                 service.category.map(n => arr.push({
-                name: n.name,
-                rndValue: n.rdmValue,
-                subC: n.subCategory.map(s => array.push({
-                    name: s.name,
-                    rating: s.rating,
-                    time: s.time,
-                    price: s.price,
-                    reviews: s.review,
-                    online: s.online  
+                    name: n.name,
+                    rndValue: n.rdmValue,
+                    // if(n.active !== 'false'){
+                    subC: (() => { 
+                        if(n.active == 'true')
+                            n.subCategory.map(s => array.push({
+                                name: s.name,
+                                rating: s.rating,
+                                time: s.time,
+                                price: s.price,
+                                reviews: s.review,
+                                online: s.online  
+                                })
+                            )
                     })
-                )
-            })
+                })
             )
         )
         })
         console.log('ole', array)
         setList(arr)
+        setTreatments(array)
         }
 
     // console.log(defaultItems)
@@ -85,8 +92,10 @@ const Services = () => {
                 
                 </Row>
             </div>
-            <ServicesList services={list} />
-            
+            <div style={{display: 'flex'}}>
+                <ServicesList services={list} />
+                <ServicesList services={treatments} />
+            </div>
          </>
     )
 }

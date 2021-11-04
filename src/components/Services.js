@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { defaultItems } from "../api/data";
 import { Row, Col } from "antd";
 import { AppstoreOutlined, CreditCardOutlined } from '@ant-design/icons';
@@ -6,36 +6,40 @@ import { AppstoreOutlined, CreditCardOutlined } from '@ant-design/icons';
 
 import SingleService from "./SingleService";
 import ServicesList from "./ServicesList";
+import Treatments from './Treatments';
 
 
 const Services = () => {
     const [list, setList] = useState([]);
-    const [treatments, setTreatments] = useState([])
+    const [ active, setActive ] = useState('Botox')
+    const [ subCategory, setSubCategory ] = useState([]);
 
-    const handleList = (serviceName) => {
+    useEffect(() => {
+        handleAll()
+        handleActive(active)
+        console.log(active)
+    },[])
+
+    const handleList = (serviceName, firstCategory) => {
         const arr = []
         const array = []
-
+        console.log(firstCategory)
         defaultItems.filter(service => {
             if(service.name === serviceName) {
+                console.log(service)
                 service.category.map(n => arr.push({
                     name: n.name,
                     rndValue: n.rdmValue,
-                    subC: n.subCategory.map(s => array.push({
-                        name: s.name,
-                        rating: s.rating,
-                        time: s.time,
-                        price: s.price,
-                        reviews: s.review,
-                        online: s.online  
-                        })
-                    )
+               
                 }))
             }
-        })
-        console.log('opa', array)
+        }
+        )
         setList(arr)
-        setTreatments(array)
+        console.log(arr.key)
+        handleActive(firstCategory)
+        // setActive(serviceName)
+    
     }
 
     const handleAll = () => {
@@ -47,41 +51,49 @@ const Services = () => {
                 service.category.map(n => arr.push({
                     name: n.name,
                     rndValue: n.rdmValue,
-                    // if(n.active !== 'false'){
-                    subC: (() => { 
-                        if(n.active == 'true')
-                            n.subCategory.map(s => array.push({
-                                name: s.name,
-                                rating: s.rating,
-                                time: s.time,
-                                price: s.price,
-                                reviews: s.review,
-                                online: s.online  
-                                })
-                            )
-                    })
-                })
+                    })   
+                )
             )
-        )
         })
-        console.log('ole', array)
         setList(arr)
-        setTreatments(array)
-        }
+        setActive()
+        handleActive('Botox')
+    }
 
-    // console.log(defaultItems)
+    const handleActive = (category) => {
+        const arr = []
+        defaultItems.filter(cat => {
+            // if(active === cat.name){
+                cat.category.map(c => {
+                    if(category == c.name){
+                        c.subCategory.map(subc => {
+                            arr.push(subc)
+                        })
+
+                    }
+                })
+            // }    
+        })
+        // console.log('auf', category)
+        setSubCategory(arr)
+        setActive(category) 
+    }
+    
+    // const handleSelect = () => {
+
+    // }
+
     return(
         <>
-            <div style={{display: 'flex',    justifyContent: 'center'}}>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
                 <Row justify="space-between" align="middle" style={{display: "flex", border: "1px solid", width: '600px'}}>
                     <Col span={3} onClick={() => handleAll()}> 
                         <SingleService icon={AppstoreOutlined} serviceName="All" /> 
                     </Col>
                 {
                     defaultItems.map(service => 
-                        <Col span={3} onClick={() => handleList(service.name)}>
-                            <SingleService
-                                 
+                        <Col span={3} onClick={() => handleList(service.name, service.category[0].name)}>
+                           <SingleService
                                 key={service.key} 
                                 icon={service.icon} 
                                 serviceName={service.name} 
@@ -93,8 +105,8 @@ const Services = () => {
                 </Row>
             </div>
             <div style={{display: 'flex'}}>
-                <ServicesList services={list} />
-                <ServicesList services={treatments} />
+                <ServicesList services={list} handleActive={handleActive}/>
+                <Treatments treatments={subCategory} />
             </div>
          </>
     )

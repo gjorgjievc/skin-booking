@@ -13,16 +13,17 @@ const Services = () => {
     const [list, setList] = useState([]);
     const [ active, setActive ] = useState('Botox')
     const [ subCategory, setSubCategory ] = useState([]);
-
+    const [ selected, setSelected ] = useState([])
+    const [ notOnline, setNotOnline ] = useState([])
+    
     useEffect(() => {
         handleAll()
         handleActive(active)
-        console.log(active)
     },[])
 
+    // hendlaj klik na Master Kategorija
     const handleList = (serviceName, firstCategory) => {
         const arr = []
-        const array = []
         console.log(firstCategory)
         defaultItems.filter(service => {
             if(service.name === serviceName) {
@@ -36,53 +37,67 @@ const Services = () => {
         }
         )
         setList(arr)
-        console.log(arr.key)
         handleActive(firstCategory)
-        // setActive(serviceName)
-    
     }
 
+    // hendlaj klik na All (master kategorija )
     const handleAll = () => {
         const arr = []
-        const array = []
-
         defaultItems.map(service => {
             return (
                 service.category.map(n => arr.push({
                     name: n.name,
                     rndValue: n.rdmValue,
+                    
                     })   
                 )
             )
         })
         setList(arr)
-        setActive()
+        // setActive()
         handleActive('Botox')
     }
 
+    // hendlaj aktivna kategorija i zacuvaj podatoci vo niza
     const handleActive = (category) => {
         const arr = []
         defaultItems.filter(cat => {
-            // if(active === cat.name){
                 cat.category.map(c => {
                     if(category == c.name){
                         c.subCategory.map(subc => {
                             arr.push(subc)
+                            
                         })
 
                     }
-                })
-            // }    
+                    // vidi dali ima onlajn parametar? vo subCategorijata (ova treba rabota ama nemozam krajot da mu go najdam)
+                    if(c.subCategory[0].online === undefined){
+                        setNotOnline(true)
+                        console.log('eve go', notOnline)
+                    }   
+                }
+                )
         })
-        // console.log('auf', category)
         setSubCategory(arr)
         setActive(category) 
     }
     
-    // const handleSelect = () => {
-
-    // }
-
+    // Hendlaj gi tretmanite sho se selektirani i cuvaj gi vo stejt
+    const handleSelect = (treatmentName) => {
+        
+        if(selected.length === 0) {
+            setSelected([treatmentName])
+        } else {
+            selected.map(s => {
+                if(selected.includes(treatmentName)){
+                    setSelected(selected.filter(t => t !== treatmentName))
+                } else {
+                    setSelected([...selected, treatmentName])
+                }
+            })
+        }
+    }
+    console.log(selected)
     return(
         <>
             <div style={{display: 'flex', justifyContent: 'center'}}>
@@ -106,7 +121,12 @@ const Services = () => {
             </div>
             <div style={{display: 'flex'}}>
                 <ServicesList services={list} handleActive={handleActive}/>
-                <Treatments treatments={subCategory} />
+                {/* {
+                    treatments.map(t => {
+                        <Treatments t
+                    })
+                } */}
+                <Treatments treatments={subCategory} select={handleSelect} notOnline={notOnline} />
             </div>
          </>
     )

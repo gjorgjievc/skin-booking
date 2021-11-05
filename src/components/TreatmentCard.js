@@ -6,11 +6,12 @@ const TreatmentCard = ({
     review,
     time,
     price,
-    online
+    online,
+    select
 }) => {
     
     return (
-        <div style={{display: 'flex', flexDirection: 'column', border: '1px solid'}}>
+        <div onClick={() => select(name)} style={{display: 'flex', flexDirection: 'column', border: '1px solid'}}>
             <div>
             {name} &nbsp; <span>${price}</span>
             </div>
@@ -18,7 +19,7 @@ const TreatmentCard = ({
                 {time}mins
             </div>
             <div>
-            &#9733;{rating} | {review} reviews
+            {rating} | {review} reviews
             </div>
         </div>
     )

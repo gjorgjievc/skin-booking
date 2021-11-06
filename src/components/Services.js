@@ -14,7 +14,7 @@ const Services = () => {
     const [ active, setActive ] = useState('Botox')
     const [ subCategory, setSubCategory ] = useState([]);
     const [ selected, setSelected ] = useState([])
-    const [ notOnline, setNotOnline ] = useState([])
+    const [ hideOnline, setHideOnline ] = useState(false)
     
     useEffect(() => {
         handleAll()
@@ -66,15 +66,18 @@ const Services = () => {
                     if(category == c.name){
                         c.subCategory.map(subc => {
                             arr.push(subc)
+                            console.log(subc, subc.online)
+                            // vidi dali ima onlajn parametar? vo subCategorijata (ova treba rabota ama nemozam krajot da mu go najdam)
+                            if(subc.online === undefined){
+                                setHideOnline(true)
+                                console.log('eve go', subCategory[0].online)
+                            } else {
+                                setHideOnline(false)
+                            }  
                             
                         })
 
                     }
-                    // vidi dali ima onlajn parametar? vo subCategorijata (ova treba rabota ama nemozam krajot da mu go najdam)
-                    if(c.subCategory[0].online === undefined){
-                        setNotOnline(true)
-                        console.log('eve go', notOnline)
-                    }   
                 }
                 )
         })
@@ -88,13 +91,11 @@ const Services = () => {
         if(selected.length === 0) {
             setSelected([treatmentName])
         } else {
-            selected.map(s => {
-                if(selected.includes(treatmentName)){
+               if(selected.includes(treatmentName)){
                     setSelected(selected.filter(t => t !== treatmentName))
                 } else {
                     setSelected([...selected, treatmentName])
                 }
-            })
         }
     }
     console.log(selected)
@@ -126,7 +127,7 @@ const Services = () => {
                         <Treatments t
                     })
                 } */}
-                <Treatments treatments={subCategory} select={handleSelect} notOnline={notOnline} />
+                <Treatments treatments={subCategory} select={handleSelect} hideOnline={hideOnline} />
             </div>
          </>
     )

@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import TreatmentCard from './TreatmentCard';
 
-const Treatments = ({ treatments, select, notOnline }) => {
+const Treatments = ({ treatments, select, hideOnline }) => {
     const [inClinic, setInClinic] = useState(true)
     // const [ hideOnline, setHideOnline ] = useState(false)
 
-    console.log(notOnline)
+    console.log(hideOnline)
 
     return (
         <div>
-            <div>
-                { notOnline ?
-                    
-                    <>
-                        <div onClick={() => setInClinic(true) }>In Clinic</div>
-                        <div onClick={() => setInClinic(false)}>Virtual</div>
-                    </>
-                :
-                <div onClick={() => setInClinic(true) }>In Clinic</div>
+            
+                { hideOnline ?
+                        <div className="one-button">
+                            <div onClick={() => setInClinic(true) }>In Clinic</div>
+                        </div>
+                    :
+                        <div className="two-buttons">
+                            <div onClick={() => setInClinic(true) }>In Clinic</div>
+                            <div onClick={() => setInClinic(false)}>Virtual</div>
+                        </div>
                 }
 
-            </div>
+            
             {  inClinic &&
                 treatments.map(t => {
                     
